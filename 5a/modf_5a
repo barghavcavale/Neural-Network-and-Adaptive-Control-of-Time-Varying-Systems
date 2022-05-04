@@ -1,0 +1,12 @@
+plt.subplot(2,1,1)
+plt.plot(endval,yp_N2,color='red');
+plt.plot(endval,BPA1_yphat_N2,color='green');
+plt.plot(endval,BPA2_yphat_N2,color='blue');
+plt.plot(endval,OSLA_yphat_N2,color='black');
+plt.text(100,1.75,s1_N2);
+plt.text(100,1.5,s2_N2);
+plt.text(100,1.25,s3_N2);
+plt.legend(["Plant","BPA1Layer","BPA2Layer","OSLA"]);
+plt.xlabel("Time Steps");
+plt.ylabel("Amplitude");
+plt.title("Example 5A N2 Complete");

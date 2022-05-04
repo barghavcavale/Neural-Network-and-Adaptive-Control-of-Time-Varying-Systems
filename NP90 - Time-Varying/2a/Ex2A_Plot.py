@@ -1,0 +1,67 @@
+import numpy as np
+import pandas as pd
+from activations import tan_h
+from activations import dtan_h
+from matplotlib import pyplot as plt
+import pickle
+import BPA1Layer_2A
+import BPA2Layer_2A
+import OSLA_2A
+
+n=2
+
+end=100
+endval=np.arange(-1*n,end)
+
+u=np.empty((end+n,1),dtype='float')
+f=np.empty((end+n,1),dtype='float')
+yp=np.empty((end+n,1),dtype='float')
+	
+mu=0.01
+
+for i in range(2,end+n):
+    u[i-1]=np.sin(2*np.pi*(i-n)/25)
+    f[i-1]=np.sin(mu*(i-1))*yp[i-1]*yp[i-2]*(yp[i-1]+2.5)/(1+yp[i-1]**2 + yp[i-2]**2)    
+    yp[i]=f[i-1]+u[i-1]
+
+BPA1Layer_2A.Run(mu)
+BPA2Layer_2A.Run(mu)
+OSLA_2A.Run(mu)
+
+
+OSLA_yphat=pickle.load(open("OSLA_2A_yphat.pickle","rb"))
+OSLA_J=pickle.load(open("OSLA_2A_J.pickle","rb"))
+BPA1_yphat=pickle.load(open("BPA1Layer_2A_yphat.pickle","rb"))
+BPA1_J=pickle.load(open("BPA1Layer_2A_J.pickle","rb"))
+BPA2_yphat=pickle.load(open("BPA2Layer_2A_yphat.pickle","rb"))
+BPA2_J=pickle.load(open("BPA2Layer_2A_J.pickle","rb"))
+
+print("Cost Using BPA for 1 Hidden Layer = ",BPA1_J[0])
+print("Cost Using BPA for 2 Hidden Layer = ",BPA2_J[0])
+print("Cost Using OSLA = ",OSLA_J[0])
+
+BPA1_J=round(BPA1_J[0],5)
+BPA2_J=round(BPA2_J[0],5)
+OSLA_J=round(OSLA_J[0],5)
+
+s1="BPA1 Error = "+str(BPA1_J)
+s2="BPA2 Error = "+str(BPA2_J)
+s3="OSLA Error = "+str(OSLA_J)
+
+plt.figure()
+plt.plot(endval,yp,color='red')
+plt.plot(endval,BPA1_yphat,color='green')
+plt.plot(endval,BPA2_yphat,color='blue')
+plt.plot(endval,OSLA_yphat,color='black')
+plt.text(100,1.75,s1)
+plt.text(100,1.5,s2)
+plt.text(100,1.25,s3)
+plt.legend(["Plant","BPA1Layer","BPA2Layer","OSLA"])
+plt.xlabel("Time Steps")
+plt.ylabel("Amplitude")
+plt.title("Example 2A Complete Time-Varying mu = "+str(mu))
+plt.savefig("Ex2A_TV_Complete1.png")
+plt.show()
+
+
+

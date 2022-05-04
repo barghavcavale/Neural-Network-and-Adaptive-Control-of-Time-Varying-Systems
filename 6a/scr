@@ -1,0 +1,5 @@
+#!/bin/bash
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+    echo "$line=pickle.load(open(\"$line\",\"rb\"))"
+done < "$1"
